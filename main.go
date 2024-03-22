@@ -3,14 +3,17 @@ package main
 import (
 	"fmt"
 	"github.com/tysufa/teenycompiler/lexer"
+	"github.com/tysufa/teenycompiler/token"
 )
 
 func main() {
-	input := "LET foobar = 123"
+	input := "+- */ >>= = != #un commentaire\n"
 	l := lexer.New(input)
 
-	for l.PeekChar() != 0 {
-		fmt.Printf("%c\n", l.CurChar)
-		l.NextChar()
+	tok := l.GetToken()
+
+	for tok.Kind != token.EOF {
+		fmt.Printf("%v\n", tok.Kind)
+		tok = l.GetToken()
 	}
 }
