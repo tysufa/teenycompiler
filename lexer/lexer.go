@@ -79,6 +79,12 @@ func (l *Lexer) GetToken() token.Token {
 		tok = createToken(l.CurChar, token.EOF)
 	} else if l.CurChar == '"' {
 		l.NextChar()
+		startPos := l.curPos
+		for l.CurChar != '"' {
+			l.NextChar()
+		}
+		tokNext := l.input[startPos:l.curPos]
+		tok = token.Token{Text: string(tokNext), Kind: token.STRING}
 	} else if l.CurChar == '>' {
 		if l.PeekChar() == '=' {
 			lastChar := l.CurChar
@@ -111,10 +117,54 @@ func (l *Lexer) GetToken() token.Token {
 		} else {
 			tok = createToken(l.CurChar, token.EQ)
 		}
+
+	} else if isDigit(l.CurChar) {
+		startPos := l.curPos
+		for isDigit(l.PeekChar()) {
+			l.NextChar()
+		}
+		if l.PeekChar() == '.' {
+			l.NextChar()
+			if !isDigit(l.PeekChar()) {
+				abort("Illegal character in number.")
+			}
+			for isDigit(l.PeekChar()) {
+				l.NextChar()
+			}
+		}
+		tokText := l.input[startPos : l.curPos+1]
+		tok = token.Token{Text: tokText, Kind: token.NUMBER}
+
+	} else if isLetter(l.CurChar) {
+		startPos := l.curPos
+		for isLetter(l.PeekChar()) {
+			l.NextChar()
+		}
+
+		tokText := l.input[startPos : l.curPos+1]
+
+		if !isKeyword(tokText) {
+			tok = token.Token{Text: tokText, Kind: token.IDENT}
+		} else {
+			tok = token.Token{Text: tokText, Kind: tokText}
+		}
+
 	} else {
 		abort("Unknown token : '" + string(l.CurChar) + "'")
 	}
 
 	l.NextChar()
 	return tok
+}
+
+func isDigit(ch byte) bool {
+	return ch <= '9' && ch >= '0'
+}
+
+func isLetter(ch byte) bool {
+	return (ch <= 'Z' && ch >= 'A') || (ch <= 'z' && ch >= 'a')
+}
+
+func isKeyword(s string) bool {
+	return s == token.WHILE || s == token.LET || s == token.IF || s == token.THEN
 }

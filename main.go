@@ -7,13 +7,13 @@ import (
 )
 
 func main() {
-	input := "+- */ >>= = != #un commentaire\n"
+	input := "IF+-123foo*THEN/"
 	l := lexer.New(input)
 
 	tok := l.GetToken()
 
 	for tok.Kind != token.EOF {
-		fmt.Printf("%v\n", tok.Kind)
+		fmt.Printf("%v : %s\n", tok.Kind, tok.Text)
 		tok = l.GetToken()
 	}
 }
