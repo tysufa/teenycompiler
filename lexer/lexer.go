@@ -166,5 +166,5 @@ func isLetter(ch byte) bool {
 }
 
 func isKeyword(s string) bool {
-	return s == token.WHILE || s == token.LET || s == token.IF || s == token.THEN
+	return s == token.WHILE || s == token.LET || s == token.IF || s == token.THEN || s == token.PRINT
 }
