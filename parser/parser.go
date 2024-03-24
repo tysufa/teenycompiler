@@ -7,9 +7,12 @@ import (
 )
 
 type Parser struct {
-	lexer     lexer.Lexer
-	curToken  token.Token
-	peekToken token.Token
+	lexer          lexer.Lexer
+	curToken       token.Token
+	peekToken      token.Token
+	symbols        []string
+	labelsDeclared []string
+	labelsGotoed   []string
 }
 
 func (p *Parser) checkToken(k string) bool {
@@ -50,6 +53,19 @@ func (p *Parser) Program() {
 
 	for !p.checkToken(token.EOF) {
 		p.statement()
+	}
+
+	labelInDeclared := false
+	for _, label := range p.labelsGotoed {
+		labelInDeclared = false
+		for _, labelDeclared := range p.labelsDeclared {
+			if labelDeclared == label {
+				labelInDeclared = true
+			}
+		}
+		if !labelInDeclared {
+			abort("Attempting to goto an undeclered label : " + label)
+		}
 	}
 }
 
@@ -100,20 +116,49 @@ func (p *Parser) statement() {
 	} else if p.checkToken(token.LABEL) {
 		print("STATEMENT-LABEL\n")
 		p.nextToken()
+		for _, el := range p.labelsDeclared {
+			if el == p.curToken.Text {
+				abort("Label already exists : " + p.curToken.Text)
+			}
+		}
+		p.labelsDeclared = append(p.labelsDeclared, p.curToken.Text)
 		p.match(token.IDENT)
 	} else if p.checkToken(token.GOTO) {
 		print("STATEMENT-GOTO\n")
 		p.nextToken()
+		p.labelsGotoed = append(p.labelsGotoed, p.curToken.Text)
 		p.match(token.IDENT)
 	} else if p.checkToken(token.LET) {
 		print("STATEMENT-LET\n")
 		p.nextToken()
+
+		symbolsExist := false
+		for _, symbol := range p.symbols {
+			if p.curToken.Text == symbol {
+				symbolsExist = true
+			}
+		}
+		if !symbolsExist {
+			p.symbols = append(p.symbols, p.curToken.Text)
+		}
+
 		p.match(token.IDENT)
 		p.match(token.EQ)
 		p.expression()
 	} else if p.checkToken(token.INPUT) {
 		print("STATEMENT-INPUT\n")
 		p.nextToken()
+
+		symbolsExist := false
+		for _, symbol := range p.symbols {
+			if p.curToken.Text == symbol {
+				symbolsExist = true
+			}
+		}
+		if !symbolsExist {
+			p.symbols = append(p.symbols, p.curToken.Text)
+		}
+
 		p.match(token.IDENT)
 	} else {
 		abort("Invalid statement at " + p.curToken.Text + "(" + p.curToken.Kind + ")")
@@ -169,6 +214,16 @@ func (p *Parser) primary() {
 	if p.checkToken(token.NUMBER) {
 		p.nextToken()
 	} else if p.checkToken(token.IDENT) {
+		symbolsExist := false
+		for _, symbol := range p.symbols {
+			if p.curToken.Text == symbol {
+				symbolsExist = true
+			}
+		}
+		if !symbolsExist {
+			abort("Referencing variable before assignement : " + p.curToken.Text)
+		}
+
 		p.nextToken()
 	} else {
 		abort("Unexpected token at " + p.curToken.Text)
