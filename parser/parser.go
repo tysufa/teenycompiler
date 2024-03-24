@@ -122,12 +122,68 @@ func (p *Parser) statement() {
 	p.nl()
 }
 
-func (p *Parser) comparison() {
+func (p *Parser) isComparisonOperator() bool {
+	return p.checkToken(token.GT) || p.checkToken(token.LT) || p.checkToken(token.GTEQ) || p.checkToken(token.LTEQ) || p.checkToken(token.EQEQ) || p.checkToken(token.NOTEQ)
+}
 
+func (p *Parser) comparison() {
+	print("COMPARISON\n")
+
+	p.expression()
+	if p.isComparisonOperator() {
+		p.nextToken()
+		p.expression()
+	} else {
+		abort("Expected comparison operator at : " + p.curToken.Text + "\n")
+	}
+
+	for p.isComparisonOperator() {
+		p.nextToken()
+		p.expression()
+	}
+}
+
+func (p *Parser) term() {
+	print("TERM\n")
+
+	p.unary()
+
+	for p.checkToken(token.SLASH) || p.checkToken(token.ASTERISK) {
+		p.nextToken()
+		p.unary()
+	}
+}
+
+func (p *Parser) unary() {
+	print("UNARY\n")
+
+	if p.checkToken(token.PLUS) || p.checkToken(token.MINUS) {
+		p.nextToken()
+	}
+	p.primary()
+}
+
+func (p *Parser) primary() {
+	print("PRIMARY : " + p.curToken.Text + "\n")
+
+	if p.checkToken(token.NUMBER) {
+		p.nextToken()
+	} else if p.checkToken(token.IDENT) {
+		p.nextToken()
+	} else {
+		abort("Unexpected token at " + p.curToken.Text)
+	}
 }
 
 func (p *Parser) expression() {
+	print("EXPRESSION\n")
 
+	p.term()
+
+	for p.checkToken(token.MINUS) || p.checkToken(token.PLUS) {
+		p.nextToken()
+		p.term()
+	}
 }
 
 func abort(message string) {
