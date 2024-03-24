@@ -42,7 +42,11 @@ func New(l lexer.Lexer) Parser {
 }
 
 func (p *Parser) Program() {
-	print("PROGRAM")
+	print("PROGRAM\n")
+
+	for p.checkToken(token.NEWLINE) {
+		p.nextToken()
+	}
 
 	for !p.checkToken(token.EOF) {
 		p.statement()
@@ -67,9 +71,59 @@ func (p *Parser) statement() {
 		} else {
 			p.expression()
 		}
+	} else if p.checkToken(token.IF) {
+		print("STATEMENT-IF\n")
+		p.nextToken()
+		p.comparison()
+
+		p.match(token.THEN)
+		p.nl()
+
+		for !p.checkToken(token.ENDIF) {
+			p.statement()
+		}
+
+		p.match(token.ENDIF)
+	} else if p.checkToken(token.WHILE) {
+		print("STATEMENT-WHILE\n")
+		p.nextToken()
+		p.comparison()
+
+		p.match(token.REPEAT)
+		p.nl()
+
+		for !p.checkToken(token.ENDWHILE) {
+			p.statement()
+		}
+
+		p.match(token.ENDWHILE)
+	} else if p.checkToken(token.LABEL) {
+		print("STATEMENT-LABEL\n")
+		p.nextToken()
+		p.match(token.IDENT)
+	} else if p.checkToken(token.GOTO) {
+		print("STATEMENT-GOTO\n")
+		p.nextToken()
+		p.match(token.IDENT)
+	} else if p.checkToken(token.LET) {
+		print("STATEMENT-LET\n")
+		p.nextToken()
+		p.match(token.IDENT)
+		p.match(token.EQ)
+		p.expression()
+	} else if p.checkToken(token.INPUT) {
+		print("STATEMENT-INPUT\n")
+		p.nextToken()
+		p.match(token.IDENT)
+	} else {
+		abort("Invalid statement at " + p.curToken.Text + "(" + p.curToken.Kind + ")")
 	}
 
 	p.nl()
+}
+
+func (p *Parser) comparison() {
+
 }
 
 func (p *Parser) expression() {
