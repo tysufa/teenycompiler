@@ -34,10 +34,10 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">QFA</h3>
+<h3 align="center">teenycompiler</h3>
 
   <p align="center">
-    The best programming language
+    small compiler for BASIC written in go
     <br />
     <a href="https://github.com/tysufa/qfa"><strong>Explore the docs »</strong></a>
     <br />
@@ -58,9 +58,6 @@
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
@@ -85,16 +82,10 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-This is a programming language that I am creating for fun and to learn how a programming language really work.
+A small compiler to train myself before creating a real programming language
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-### Built With
-* ![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -111,11 +102,11 @@ This is an example of how to list things you need to use the software and how to
 ### Installation
 1. Clone the repo
    ```sh
-   git clone https://github.com/tysufa/qfa.git
+   git clone https://github.com/tysufa/teenycompiler.git
    ```
-2. Start
+2. Start with the name of the file you want to compile
    ```sh
-   go run main.go
+   go run main.go hello.teeny
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
