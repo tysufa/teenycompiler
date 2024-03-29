@@ -1,13 +1,16 @@
 package parser
 
 import (
+	"os"
+
+	"github.com/tysufa/teenycompiler/emitter"
 	"github.com/tysufa/teenycompiler/lexer"
 	"github.com/tysufa/teenycompiler/token"
-	"os"
 )
 
 type Parser struct {
 	lexer          lexer.Lexer
+	emitter        *emitter.Emitter
 	curToken       token.Token
 	peekToken      token.Token
 	symbols        []string
@@ -35,8 +38,8 @@ func (p *Parser) nextToken() {
 	p.peekToken = p.lexer.GetToken()
 }
 
-func New(l lexer.Lexer) Parser {
-	p := Parser{lexer: l}
+func New(l lexer.Lexer, e *emitter.Emitter) Parser {
+	p := Parser{lexer: l, emitter: e}
 
 	p.nextToken()
 	p.nextToken()
@@ -46,6 +49,8 @@ func New(l lexer.Lexer) Parser {
 
 func (p *Parser) Program() {
 	print("PROGRAM\n")
+	p.emitter.HeaderLine("#include <stdio.h>")
+	p.emitter.HeaderLine("int main (void){")
 
 	for p.checkToken(token.NEWLINE) {
 		p.nextToken()
@@ -54,6 +59,9 @@ func (p *Parser) Program() {
 	for !p.checkToken(token.EOF) {
 		p.statement()
 	}
+
+	p.emitter.EmitLine("return 0;")
+	p.emitter.EmitLine("}")
 
 	labelInDeclared := false
 	for _, label := range p.labelsGotoed {
@@ -64,7 +72,7 @@ func (p *Parser) Program() {
 			}
 		}
 		if !labelInDeclared {
-			abort("Attempting to goto an undeclered label : " + label)
+			panic("Attempting to GOTO an undeclared label : " + label)
 		}
 	}
 }
@@ -83,9 +91,12 @@ func (p *Parser) statement() {
 		p.nextToken()
 
 		if p.checkToken(token.STRING) {
+			p.emitter.EmitLine("printf(\"" + p.curToken.Text + "\\n\");")
 			p.nextToken()
 		} else {
+			p.emitter.Emit("printf(\"%" + ".2f\\n\", (float)(")
 			p.expression()
+			p.emitter.EmitLine("));")
 		}
 	} else if p.checkToken(token.IF) {
 		print("STATEMENT-IF\n")
