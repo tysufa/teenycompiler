@@ -101,20 +101,25 @@ func (p *Parser) statement() {
 	} else if p.checkToken(token.IF) {
 		print("STATEMENT-IF\n")
 		p.nextToken()
+		p.emitter.Emit("if(")
 		p.comparison()
 
 		p.match(token.THEN)
 		p.nl()
+		p.emitter.EmitLine("){")
 
 		for !p.checkToken(token.ENDIF) {
 			p.statement()
 		}
 
 		p.match(token.ENDIF)
+		p.emitter.EmitLine("}")
 	} else if p.checkToken(token.WHILE) {
 		print("STATEMENT-WHILE\n")
+		p.emitter.Emit("while(")
 		p.nextToken()
 		p.comparison()
+		p.emitter.EmitLine("){")
 
 		p.match(token.REPEAT)
 		p.nl()
@@ -124,6 +129,7 @@ func (p *Parser) statement() {
 		}
 
 		p.match(token.ENDWHILE)
+		p.emitter.EmitLine("}")
 	} else if p.checkToken(token.LABEL) {
 		print("STATEMENT-LABEL\n")
 		p.nextToken()
