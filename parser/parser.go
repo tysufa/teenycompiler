@@ -139,11 +139,14 @@ func (p *Parser) statement() {
 			}
 		}
 		p.labelsDeclared = append(p.labelsDeclared, p.curToken.Text)
+
+		p.emitter.EmitLine(p.curToken.Text + ":")
 		p.match(token.IDENT)
 	} else if p.checkToken(token.GOTO) {
 		print("STATEMENT-GOTO\n")
 		p.nextToken()
 		p.labelsGotoed = append(p.labelsGotoed, p.curToken.Text)
+		p.emitter.EmitLine("goto " + p.curToken.Text + ";")
 		p.match(token.IDENT)
 	} else if p.checkToken(token.LET) {
 		print("STATEMENT-LET\n")
