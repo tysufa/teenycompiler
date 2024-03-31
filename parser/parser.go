@@ -160,11 +160,14 @@ func (p *Parser) statement() {
 		}
 		if !symbolsExist {
 			p.symbols = append(p.symbols, p.curToken.Text)
+			p.emitter.HeaderLine("float " + p.curToken.Text + ";")
 		}
 
+		p.emitter.Emit(p.curToken.Text + " = ")
 		p.match(token.IDENT)
 		p.match(token.EQ)
 		p.expression()
+		p.emitter.EmitLine(";")
 	} else if p.checkToken(token.INPUT) {
 		print("STATEMENT-INPUT\n")
 		p.nextToken()
@@ -177,8 +180,14 @@ func (p *Parser) statement() {
 		}
 		if !symbolsExist {
 			p.symbols = append(p.symbols, p.curToken.Text)
+			p.emitter.HeaderLine("float " + p.curToken.Text + ";")
 		}
 
+		p.emitter.EmitLine("if(0==scanf(\"%" + "f\", &" + p.curToken.Text + ")) {")
+		p.emitter.EmitLine(p.curToken.Text + " = 0;")
+		p.emitter.Emit("scanf(\"%")
+		p.emitter.EmitLine("*s\");")
+		p.emitter.EmitLine("}")
 		p.match(token.IDENT)
 	} else {
 		abort("Invalid statement at " + p.curToken.Text + "(" + p.curToken.Kind + ")")
@@ -196,6 +205,7 @@ func (p *Parser) comparison() {
 
 	p.expression()
 	if p.isComparisonOperator() {
+		p.emitter.Emit(p.curToken.Text)
 		p.nextToken()
 		p.expression()
 	} else {
@@ -203,6 +213,7 @@ func (p *Parser) comparison() {
 	}
 
 	for p.isComparisonOperator() {
+		p.emitter.Emit(p.curToken.Text)
 		p.nextToken()
 		p.expression()
 	}
@@ -214,6 +225,7 @@ func (p *Parser) term() {
 	p.unary()
 
 	for p.checkToken(token.SLASH) || p.checkToken(token.ASTERISK) {
+		p.emitter.Emit(p.curToken.Text)
 		p.nextToken()
 		p.unary()
 	}
@@ -223,6 +235,7 @@ func (p *Parser) unary() {
 	print("UNARY\n")
 
 	if p.checkToken(token.PLUS) || p.checkToken(token.MINUS) {
+		p.emitter.Emit(p.curToken.Text)
 		p.nextToken()
 	}
 	p.primary()
@@ -232,6 +245,7 @@ func (p *Parser) primary() {
 	print("PRIMARY : " + p.curToken.Text + "\n")
 
 	if p.checkToken(token.NUMBER) {
+		p.emitter.Emit(p.curToken.Text)
 		p.nextToken()
 	} else if p.checkToken(token.IDENT) {
 		symbolsExist := false
@@ -244,6 +258,7 @@ func (p *Parser) primary() {
 			abort("Referencing variable before assignement : " + p.curToken.Text)
 		}
 
+		p.emitter.Emit(p.curToken.Text)
 		p.nextToken()
 	} else {
 		abort("Unexpected token at " + p.curToken.Text)
@@ -256,6 +271,7 @@ func (p *Parser) expression() {
 	p.term()
 
 	for p.checkToken(token.MINUS) || p.checkToken(token.PLUS) {
+		p.emitter.Emit(p.curToken.Text)
 		p.nextToken()
 		p.term()
 	}
