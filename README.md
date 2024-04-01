@@ -109,88 +109,13 @@ This is an example of how to list things you need to use the software and how to
 
 ## Usage
 
-### end of statement
-every statement ends with a semicolon
-```
-statement;
-```
-
-### declarations
-Use the keyword let
-```
-let variable = value;
-```
-### types
-suported types are limited to integers and booleans at the moment
-```
-let variable1 = 10;
-let variable2 = 123456789;
-let variable3 = true;
-let variable4 = false;
-```
-### functions
-you can declare a function with the fn keyword and return a value with return
-```
-fn(x, y){
-  return x + y;
-};
-```
-and you can stock it like you would with a variable
-```
-let add = fn(x, y){
-  return x + y;
-};
-```
-### if statements
-you can do an if else statement like you would with any language
-```
-if (10 == 9){
-  expression;
-}
-else{
-  expression;
-}
-```
+### BASIC code
+you have a hello.teeny file in the project to test the compiler and to see examples of BASIC code, it's a code to show the first numbers of the fibonacci sequence
 
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+<!-- _For more examples, please refer to the [Documentation](https://example.com)_ -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [x] Lexer
-	- Extand the lexer
-		- [ ] Strings
-		- [ ] floats
-- [ ] Parser
-- [ ] Evaluator
-
-See the [open issues](https://github.com/tysufa/teenycompiler/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- LICENSE -->
@@ -205,18 +130,18 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - philemon.penot@gmail.com
+Philémon PENOT - philemon.penot@gmail.com
 
-Project Link: [https://github.com/tysufa/teenycompiler](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/tysufa/teenycompiler](https://github.com/tysufa/teenycompiler)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+## Acknowledgment
 
-* []() Huge thanks to Thorsten Ball and his [book](https://interpreterbook.com/) wich has been the main source of inspiration for this project
+this project is essentially a translation in golang of [this tutorial](https://austinhenley.com/blog/teenytinycompiler1.html). The tutorial explain how to do a quick compiler of BASIC in python. His tutorial is really good and easy to follow, don't hesitate to go have a look
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

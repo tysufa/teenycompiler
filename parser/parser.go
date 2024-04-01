@@ -48,7 +48,6 @@ func New(l lexer.Lexer, e *emitter.Emitter) Parser {
 }
 
 func (p *Parser) Program() {
-	print("PROGRAM\n")
 	p.emitter.HeaderLine("#include <stdio.h>")
 	p.emitter.HeaderLine("int main (void){")
 
@@ -78,7 +77,6 @@ func (p *Parser) Program() {
 }
 
 func (p *Parser) nl() {
-	print("NEWLINE\n")
 	p.match(token.NEWLINE)
 	for p.checkToken(token.NEWLINE) {
 		p.nextToken()
@@ -87,7 +85,6 @@ func (p *Parser) nl() {
 
 func (p *Parser) statement() {
 	if p.checkToken(token.PRINT) {
-		print("STATEMENT-PRINT\n")
 		p.nextToken()
 
 		if p.checkToken(token.STRING) {
@@ -99,7 +96,6 @@ func (p *Parser) statement() {
 			p.emitter.EmitLine("));")
 		}
 	} else if p.checkToken(token.IF) {
-		print("STATEMENT-IF\n")
 		p.nextToken()
 		p.emitter.Emit("if(")
 		p.comparison()
@@ -115,7 +111,6 @@ func (p *Parser) statement() {
 		p.match(token.ENDIF)
 		p.emitter.EmitLine("}")
 	} else if p.checkToken(token.WHILE) {
-		print("STATEMENT-WHILE\n")
 		p.emitter.Emit("while(")
 		p.nextToken()
 		p.comparison()
@@ -131,7 +126,6 @@ func (p *Parser) statement() {
 		p.match(token.ENDWHILE)
 		p.emitter.EmitLine("}")
 	} else if p.checkToken(token.LABEL) {
-		print("STATEMENT-LABEL\n")
 		p.nextToken()
 		for _, el := range p.labelsDeclared {
 			if el == p.curToken.Text {
@@ -143,13 +137,11 @@ func (p *Parser) statement() {
 		p.emitter.EmitLine(p.curToken.Text + ":")
 		p.match(token.IDENT)
 	} else if p.checkToken(token.GOTO) {
-		print("STATEMENT-GOTO\n")
 		p.nextToken()
 		p.labelsGotoed = append(p.labelsGotoed, p.curToken.Text)
 		p.emitter.EmitLine("goto " + p.curToken.Text + ";")
 		p.match(token.IDENT)
 	} else if p.checkToken(token.LET) {
-		print("STATEMENT-LET\n")
 		p.nextToken()
 
 		symbolsExist := false
@@ -169,7 +161,6 @@ func (p *Parser) statement() {
 		p.expression()
 		p.emitter.EmitLine(";")
 	} else if p.checkToken(token.INPUT) {
-		print("STATEMENT-INPUT\n")
 		p.nextToken()
 
 		symbolsExist := false
@@ -201,7 +192,6 @@ func (p *Parser) isComparisonOperator() bool {
 }
 
 func (p *Parser) comparison() {
-	print("COMPARISON\n")
 
 	p.expression()
 	if p.isComparisonOperator() {
@@ -220,7 +210,6 @@ func (p *Parser) comparison() {
 }
 
 func (p *Parser) term() {
-	print("TERM\n")
 
 	p.unary()
 
@@ -232,7 +221,6 @@ func (p *Parser) term() {
 }
 
 func (p *Parser) unary() {
-	print("UNARY\n")
 
 	if p.checkToken(token.PLUS) || p.checkToken(token.MINUS) {
 		p.emitter.Emit(p.curToken.Text)
@@ -242,7 +230,6 @@ func (p *Parser) unary() {
 }
 
 func (p *Parser) primary() {
-	print("PRIMARY : " + p.curToken.Text + "\n")
 
 	if p.checkToken(token.NUMBER) {
 		p.emitter.Emit(p.curToken.Text)
@@ -266,7 +253,6 @@ func (p *Parser) primary() {
 }
 
 func (p *Parser) expression() {
-	print("EXPRESSION\n")
 
 	p.term()
 
